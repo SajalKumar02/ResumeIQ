@@ -280,6 +280,8 @@ a:hover {
 
 /* ---------- 6. Form tile (parchment) ---------- */
 .form-band {
+  position: relative;
+  overflow: hidden;
   padding: var(--space-section) 0;
   background: var(--parchment);
 }
@@ -409,7 +411,7 @@ textarea:disabled {
 .dropzone.is-dragover {
   border-style: solid;
   border-color: var(--primary-focus);
-  background: var(--pearl);
+  background-color: var(--pearl);
 }
 
 .dropzone.is-invalid {
@@ -614,6 +616,8 @@ textarea:disabled {
 
 /* ---------- 8. Results tile (white) ---------- */
 .results-band {
+  position: relative;
+  overflow: hidden;
   padding: var(--space-section) 0;
   background: var(--canvas);
   scroll-margin-top: calc(var(--nav-h) + var(--subnav-h));
@@ -884,6 +888,158 @@ textarea:disabled {
   color: var(--ink-48);
 }
 
+/* ---------- 9b. Section backgrounds (pure CSS, no JS) ---------- */
+/* Content sits above decorative layers */
+.form-band__inner,
+.results-inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* Form tile: dot grid that fades at the edges + two drifting blue orbs */
+.form-band::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(29, 29, 31, 0.14) 1px, transparent 1.3px);
+  background-size: 24px 24px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+  pointer-events: none;
+}
+
+.form-band::after {
+  content: "";
+  position: absolute;
+  top: -180px;
+  right: -140px;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: rgba(41, 151, 255, 0.16);
+  filter: blur(90px);
+  animation: orb-drift 24s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.form-band__inner::before {
+  content: "";
+  position: absolute;
+  bottom: -220px;
+  left: -260px;
+  width: 560px;
+  height: 560px;
+  border-radius: 50%;
+  background: rgba(0, 102, 204, 0.12);
+  filter: blur(100px);
+  animation: orb-drift 30s ease-in-out infinite alternate-reverse;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes orb-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(-90px, 70px, 0) scale(1.15);
+  }
+}
+
+/* Results tile: blueprint grid fading from the top + glow behind the score */
+.results-band::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.045) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: linear-gradient(to bottom, #000, transparent 55%);
+  mask-image: linear-gradient(to bottom, #000, transparent 55%);
+  pointer-events: none;
+}
+
+.score-header {
+  position: relative;
+  isolation: isolate;
+}
+
+.score-header::before {
+  content: "";
+  position: absolute;
+  top: -90px;
+  left: -90px;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: rgba(41, 151, 255, 0.2);
+  filter: blur(70px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Dropzone: faint dot texture, cleared once a file is chosen */
+.dropzone {
+  background-image: radial-gradient(rgba(29, 29, 31, 0.07) 1px, transparent 1.2px);
+  background-size: 16px 16px;
+}
+
+.dropzone.is-dragover {
+  background-image: radial-gradient(rgba(0, 113, 227, 0.28) 1px, transparent 1.4px);
+}
+
+.dropzone.is-filled {
+  background-image: none;
+}
+
+/* Hero seam: 1px blue hairline where the dark tile meets the form tile */
+.hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: rgba(41, 151, 255, 0.55);
+  pointer-events: none;
+}
+
+/* Footer: same dot grid, quieter */
+.site-footer {
+  position: relative;
+  background-image: radial-gradient(rgba(29, 29, 31, 0.08) 1px, transparent 1.2px);
+  background-size: 24px 24px;
+}
+
+/* Cursor spotlight on the form tile (bg.js drives --mx / --my / --spot) */
+.form-band {
+  --mx: 50%;
+  --my: -400px;
+  --spot: 0;
+  background-image: radial-gradient(
+    520px circle at var(--mx) var(--my),
+    rgba(41, 151, 255, calc(0.16 * var(--spot))),
+    transparent 70%
+  );
+}
+
+/* Score glow breathes slowly */
+.score-header::before {
+  animation: glow-breathe 7s ease-in-out infinite alternate;
+}
+
+@keyframes glow-breathe {
+  from {
+    opacity: 0.65;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
 /* ---------- 10. Responsive (design.md breakpoints) ---------- */
 @media (max-width: 1068px) {
   .hero h1 {
@@ -944,6 +1100,13 @@ textarea:disabled {
     min-height: 220px;
   }
 
+  .form-band::after,
+  .form-band__inner::before {
+    width: 320px;
+    height: 320px;
+    filter: blur(70px);
+  }
+
   .form-footer {
     flex-direction: column;
     align-items: stretch;
@@ -967,6 +1130,12 @@ textarea:disabled {
 
   .breakdown__fill {
     transition: none;
+  }
+
+  .form-band::after,
+  .form-band__inner::before,
+  .score-header::before {
+    animation: none;
   }
 
   .btn__spinner {
