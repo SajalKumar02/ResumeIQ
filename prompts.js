@@ -26,11 +26,11 @@ RULES:
 - If the image is not a resume, is unreadable, or the JD is empty, return the error object.
 
 SCORING (0-100):
-- Must-have skills: 40%
-- Nice-to-have skills: 15%
-- Experience and projects relevance: 25%
-- Keyword/ATS alignment: 10%
-- Resume clarity and impact: 10%
+- Must-have skills: out of 40
+- Nice-to-have skills: out of 15
+- Experience and projects relevance: out of 25
+- Keyword/ATS alignment: out of 10
+- Resume clarity and impact: out of 10
 
 OUTPUT: ONLY valid JSON. No markdown, no backticks, no preamble.
 
@@ -64,4 +64,4 @@ On failure return:
 { "error": "reason", "overall_score": null, "image_quality": { "readability": "Low", "issues": [string] } }
 
 Verdict bands: 80-100 Strong, 60-79 Good, 40-59 Partial, below 40 Weak.
-If readability is Low, lower your confidence and say so in the summary.`
+If readability is Low, lower your confidence and say so in the summary.`;
