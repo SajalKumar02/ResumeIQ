@@ -1,219 +1,289 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ResumeIQ — ATS Resume Analyzer</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-  <header class="nav-bar">
-    <div class="nav-bar__inner">
-      <a class="logo" href="/" aria-label="ResumeIQ home">
-        <span class="logo__mark" aria-hidden="true">IQ</span>
-        <span class="logo__name">ResumeIQ</span>
-      </a>
-      <p class="nav-bar__meta">ATS Resume Analyzer</p>
-    </div>
-  </header>
-
-  <nav class="tab-rail" aria-label="Product">
-    <div class="tab-rail__inner">
-      <p class="breadcrumb">Home / Analyze</p>
-      <div class="tabs" role="tablist">
-        <span class="tab tab--active" role="tab" aria-selected="true">Analyze</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ResumeIQ — ATS Resume Analyzer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header class="nav-bar">
+      <div class="nav-bar__inner">
+        <a class="logo" href="/" aria-label="ResumeIQ home">
+          <span class="logo__mark" aria-hidden="true">IQ</span>
+          <span class="logo__name">ResumeIQ</span>
+        </a>
+        <p class="nav-bar__meta">ATS Resume Analyzer</p>
       </div>
-    </div>
-  </nav>
+    </header>
 
-  <section class="hero" aria-labelledby="hero-title">
-    <canvas id="hero-canvas" class="hero__canvas" aria-hidden="true"></canvas>
-    <div class="hero__inner">
-      <h1 id="hero-title">Match your resume to the job</h1>
-      <p class="hero__lead">Paste a job description, upload a resume, and send both for ATS analysis.</p>
-      <div class="hero__actions">
-        <a class="btn btn--primary" href="#form-heading">Analyze a resume</a>
+    <nav class="tab-rail" aria-label="Product">
+      <div class="tab-rail__inner">
+        <p class="breadcrumb">Home / Analyze</p>
+        <div class="tabs" role="tablist">
+          <span class="tab tab--active" role="tab" aria-selected="true"
+            >Analyze</span
+          >
+        </div>
       </div>
-    </div>
-  </section>
+    </nav>
 
-  <main>
-    <div class="canvas-gap" aria-hidden="true"></div>
+    <section class="hero" aria-labelledby="hero-title">
+      <canvas id="hero-canvas" class="hero__canvas" aria-hidden="true"></canvas>
+      <div class="hero__inner">
+        <h1 id="hero-title">Match your resume to the job</h1>
+        <p class="hero__lead">
+          Paste a job description, upload a resume, and send both for ATS
+          analysis.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#form-heading">Analyze a resume</a>
+        </div>
+      </div>
+    </section>
 
-    <section class="form-band" aria-labelledby="form-heading">
-      <div class="form-band__inner">
-        <h2 id="form-heading" class="section-heading">Prepare your analysis</h2>
-        <p class="section-lead">Both a job description and a valid resume file are required before you can analyze.</p>
+    <main>
+      <div class="canvas-gap" aria-hidden="true"></div>
 
-        <form id="analyze-form" novalidate>
-          <div class="form-grid">
-            <div class="field">
-              <label class="field__label" for="job-description">Job description</label>
-              <p class="field__hint" id="jd-hint">Paste the full posting, including required skills, qualifications, and responsibilities. Minimum 30 characters.</p>
-              <textarea
-                id="job-description"
-                name="jobDescription"
-                rows="14"
-                maxlength="20000"
-                placeholder="Paste the job description here. Include the role title, required skills, years of experience, and key responsibilities."
-                aria-describedby="jd-hint jd-count"
-              ></textarea>
-              <div class="field__meta">
-                <span id="jd-count" class="char-count">0 / 20,000</span>
-              </div>
-            </div>
+      <section class="form-band" aria-labelledby="form-heading">
+        <div class="form-band__inner">
+          <h2 id="form-heading" class="section-heading">
+            Prepare your analysis
+          </h2>
+          <p class="section-lead">
+            Both a job description and a valid resume file are required before
+            you can analyze.
+          </p>
 
-            <div class="field">
-              <span class="field__label" id="resume-label">Resume</span>
-              <p class="field__hint" id="resume-hint">PNG, JPG, or WEBP, up to 3 MB. Drag a file here, or choose one from your device.</p>
-
-              <div
-                class="dropzone"
-                id="dropzone"
-                tabindex="0"
-                role="button"
-                aria-labelledby="resume-label"
-                aria-describedby="resume-hint resume-error"
-              >
-                <input
-                  id="resume-file"
-                  class="dropzone__input"
-                  type="file"
-                  name="resume"
-                  accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
-                  tabindex="-1"
-                  aria-hidden="true"
+          <form id="analyze-form" novalidate>
+            <div class="form-grid">
+              <div class="field">
+                <label class="field__label" for="job-description"
+                  >Job description</label
                 >
-                <div class="dropzone__idle" id="dropzone-idle">
-                  <p class="dropzone__title">Drop resume here</p>
-                  <p class="dropzone__formats">PNG, JPG, or WEBP</p>
-                  <span class="dropzone__action">Choose file</span>
+                <p class="field__hint" id="jd-hint">
+                  Paste the full posting, including required skills,
+                  qualifications, and responsibilities. Minimum 30 characters.
+                </p>
+                <textarea
+                  id="job-description"
+                  name="jobDescription"
+                  rows="14"
+                  maxlength="20000"
+                  placeholder="Paste the job description here. Include the role title, required skills, years of experience, and key responsibilities."
+                  aria-describedby="jd-hint jd-count"
+                ></textarea>
+                <div class="field__meta">
+                  <span id="jd-count" class="char-count">0 / 20,000</span>
                 </div>
-                <div class="dropzone__file is-hidden" id="dropzone-file">
-                  <p class="dropzone__filename" id="file-name"></p>
-                  <p class="dropzone__filesize" id="file-size"></p>
-                  <div class="dropzone__actions">
-                    <button type="button" class="btn btn--outline" id="replace-file">Replace</button>
-                    <button type="button" class="btn btn--outline" id="remove-file">Remove</button>
+              </div>
+
+              <div class="field">
+                <span class="field__label" id="resume-label">Resume</span>
+                <p class="field__hint" id="resume-hint">
+                  PDF, PNG, JPG, or WEBP. Images up to 3 MB, PDFs up to 5 MB.
+                  Drag a file here, or choose one from your device.
+                </p>
+
+                <div
+                  class="dropzone"
+                  id="dropzone"
+                  tabindex="0"
+                  role="button"
+                  aria-labelledby="resume-label"
+                  aria-describedby="resume-hint resume-error"
+                >
+                  <input
+                    id="resume-file"
+                    class="dropzone__input"
+                    type="file"
+                    name="resume"
+                    accept=".pdf,.png,.jpg,.jpeg,.webp,application/pdf,image/png,image/jpeg,image/webp"
+                    tabindex="-1"
+                    aria-hidden="true"
+                  />
+                  <div class="dropzone__idle" id="dropzone-idle">
+                    <p class="dropzone__title">Drop resume here</p>
+                    <p class="dropzone__formats">PDF, PNG, JPG, or WEBP</p>
+                    <span class="dropzone__action">Choose file</span>
+                  </div>
+                  <div class="dropzone__file is-hidden" id="dropzone-file">
+                    <p class="dropzone__filename" id="file-name"></p>
+                    <p class="dropzone__filesize" id="file-size"></p>
+                    <div class="dropzone__actions">
+                      <button
+                        type="button"
+                        class="btn btn--outline"
+                        id="replace-file"
+                      >
+                        Replace
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn--outline"
+                        id="remove-file"
+                      >
+                        Remove
+                      </button>
+                    </div>
                   </div>
                 </div>
+                <p
+                  class="field__error"
+                  id="resume-error"
+                  role="alert"
+                  hidden
+                ></p>
               </div>
-              <p class="field__error" id="resume-error" role="alert" hidden></p>
+            </div>
+
+            <div class="form-footer">
+              <p
+                class="status"
+                id="form-status"
+                role="status"
+                aria-live="polite"
+              ></p>
+              <button
+                type="submit"
+                class="btn btn--primary"
+                id="analyze-btn"
+                disabled
+              >
+                <span class="btn__label">Analyze Resume</span>
+                <span class="btn__spinner" aria-hidden="true"></span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section
+        class="results-band"
+        id="results-error"
+        hidden
+        aria-live="assertive"
+      >
+        <div class="results-inner">
+          <h2 class="section-heading">Analysis could not be completed</h2>
+          <p class="results-error-message" id="error-message"></p>
+          <div class="image-quality" id="error-image-quality" hidden>
+            <p class="meta-note">
+              Image readability: <span id="error-readability"></span>
+            </p>
+            <ul class="plain-list" id="error-issues"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="results-band" id="results" hidden>
+        <div class="results-inner">
+          <header class="score-header">
+            <div>
+              <p class="score-label">Overall score</p>
+              <p class="score-value" id="overall-score"></p>
+            </div>
+            <p class="verdict-badge" id="verdict"></p>
+          </header>
+
+          <p class="summary" id="summary"></p>
+
+          <h3 class="feature-title">Breakdown</h3>
+          <ul class="breakdown" id="breakdown">
+            <li data-key="must_have_skills" data-max="40">
+              <span class="breakdown__label">Must-have skills</span>
+              <span class="breakdown__value"></span>
+              <span class="breakdown__bar" aria-hidden="true"
+                ><span class="breakdown__fill"></span
+              ></span>
+            </li>
+            <li data-key="nice_to_have_skills" data-max="15">
+              <span class="breakdown__label">Nice-to-have skills</span>
+              <span class="breakdown__value"></span>
+              <span class="breakdown__bar" aria-hidden="true"
+                ><span class="breakdown__fill"></span
+              ></span>
+            </li>
+            <li data-key="experience_relevance" data-max="25">
+              <span class="breakdown__label">Experience and projects</span>
+              <span class="breakdown__value"></span>
+              <span class="breakdown__bar" aria-hidden="true"
+                ><span class="breakdown__fill"></span
+              ></span>
+            </li>
+            <li data-key="ats_keywords" data-max="10">
+              <span class="breakdown__label">Keyword / ATS alignment</span>
+              <span class="breakdown__value"></span>
+              <span class="breakdown__bar" aria-hidden="true"
+                ><span class="breakdown__fill"></span
+              ></span>
+            </li>
+            <li data-key="clarity_impact" data-max="10">
+              <span class="breakdown__label">Clarity and impact</span>
+              <span class="breakdown__value"></span>
+              <span class="breakdown__bar" aria-hidden="true"
+                ><span class="breakdown__fill"></span
+              ></span>
+            </li>
+          </ul>
+
+          <div class="tag-grid">
+            <div>
+              <h3 class="feature-title">Matched skills</h3>
+              <div class="tag-list" id="matched-skills"></div>
+            </div>
+            <div>
+              <h3 class="feature-title">Missing must-haves</h3>
+              <div class="tag-list" id="missing-must-have"></div>
+            </div>
+            <div>
+              <h3 class="feature-title">Missing nice-to-haves</h3>
+              <div class="tag-list" id="missing-nice-to-have"></div>
             </div>
           </div>
 
-          <div class="form-footer">
-            <p class="status" id="form-status" role="status" aria-live="polite"></p>
-            <button type="submit" class="btn btn--primary" id="analyze-btn" disabled>
-              <span class="btn__label">Analyze Resume</span>
-              <span class="btn__spinner" aria-hidden="true"></span>
-            </button>
+          <div class="split-lists">
+            <div>
+              <h3 class="feature-title">Strengths</h3>
+              <ul class="plain-list" id="strengths"></ul>
+            </div>
+            <div>
+              <h3 class="feature-title">Gaps</h3>
+              <ul class="plain-list" id="gaps"></ul>
+            </div>
           </div>
-        </form>
+
+          <h3 class="feature-title">Suggestions</h3>
+          <div class="suggestion-list" id="suggestions"></div>
+
+          <div class="image-quality">
+            <h3 class="feature-title">Image quality</h3>
+            <p class="meta-note">
+              Readability: <span id="image-readability"></span>
+            </p>
+            <ul class="plain-list" id="image-issues"></ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <p>ResumeIQ</p>
+        <p>
+          Analyze a resume against a job description. Input only in this
+          release.
+        </p>
       </div>
-    </section>
+    </footer>
 
-    <section class="results-band" id="results-error" hidden aria-live="assertive">
-      <div class="results-inner">
-        <h2 class="section-heading">Analysis could not be completed</h2>
-        <p class="results-error-message" id="error-message"></p>
-        <div class="image-quality" id="error-image-quality" hidden>
-          <p class="meta-note">Image readability: <span id="error-readability"></span></p>
-          <ul class="plain-list" id="error-issues"></ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="results-band" id="results" hidden>
-      <div class="results-inner">
-        <header class="score-header">
-          <div>
-            <p class="score-label">Overall score</p>
-            <p class="score-value" id="overall-score"></p>
-          </div>
-          <p class="verdict-badge" id="verdict"></p>
-        </header>
-
-        <p class="summary" id="summary"></p>
-
-        <h3 class="feature-title">Breakdown</h3>
-        <ul class="breakdown" id="breakdown">
-          <li data-key="must_have_skills" data-max="40">
-            <span class="breakdown__label">Must-have skills</span>
-            <span class="breakdown__value"></span>
-            <span class="breakdown__bar" aria-hidden="true"><span class="breakdown__fill"></span></span>
-          </li>
-          <li data-key="nice_to_have_skills" data-max="15">
-            <span class="breakdown__label">Nice-to-have skills</span>
-            <span class="breakdown__value"></span>
-            <span class="breakdown__bar" aria-hidden="true"><span class="breakdown__fill"></span></span>
-          </li>
-          <li data-key="experience_relevance" data-max="25">
-            <span class="breakdown__label">Experience and projects</span>
-            <span class="breakdown__value"></span>
-            <span class="breakdown__bar" aria-hidden="true"><span class="breakdown__fill"></span></span>
-          </li>
-          <li data-key="ats_keywords" data-max="10">
-            <span class="breakdown__label">Keyword / ATS alignment</span>
-            <span class="breakdown__value"></span>
-            <span class="breakdown__bar" aria-hidden="true"><span class="breakdown__fill"></span></span>
-          </li>
-          <li data-key="clarity_impact" data-max="10">
-            <span class="breakdown__label">Clarity and impact</span>
-            <span class="breakdown__value"></span>
-            <span class="breakdown__bar" aria-hidden="true"><span class="breakdown__fill"></span></span>
-          </li>
-        </ul>
-
-        <div class="tag-grid">
-          <div>
-            <h3 class="feature-title">Matched skills</h3>
-            <div class="tag-list" id="matched-skills"></div>
-          </div>
-          <div>
-            <h3 class="feature-title">Missing must-haves</h3>
-            <div class="tag-list" id="missing-must-have"></div>
-          </div>
-          <div>
-            <h3 class="feature-title">Missing nice-to-haves</h3>
-            <div class="tag-list" id="missing-nice-to-have"></div>
-          </div>
-        </div>
-
-        <div class="split-lists">
-          <div>
-            <h3 class="feature-title">Strengths</h3>
-            <ul class="plain-list" id="strengths"></ul>
-          </div>
-          <div>
-            <h3 class="feature-title">Gaps</h3>
-            <ul class="plain-list" id="gaps"></ul>
-          </div>
-        </div>
-
-        <h3 class="feature-title">Suggestions</h3>
-        <div class="suggestion-list" id="suggestions"></div>
-
-        <div class="image-quality">
-          <h3 class="feature-title">Image quality</h3>
-          <p class="meta-note">Readability: <span id="image-readability"></span></p>
-          <ul class="plain-list" id="image-issues"></ul>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="site-footer__inner">
-      <p>ResumeIQ</p>
-      <p>Analyze a resume against a job description. Input only in this release.</p>
-    </div>
-  </footer>
-
-  <script src="/index.js" defer></script>
-  <script src="/bg.js" defer></script>
-</body>
+    <script src="/index.js" defer></script>
+    <script src="/bg.js" defer></script>
+  </body>
 </html>

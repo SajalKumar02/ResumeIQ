@@ -1,9 +1,15 @@
 // ---------- Config (must match server.js) ----------
 const API_URL = "/api/analyze";
 
-const ACCEPTED_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp"];
-const ACCEPTED_MIME_TYPES = ["image/png", "image/jpeg", "image/webp"];
+const ACCEPTED_EXTENSIONS = [".pdf", ".png", ".jpg", ".jpeg", ".webp"];
+const ACCEPTED_MIME_TYPES = [
+  "application/pdf",
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+];
 const MIME_BY_EXT = {
+  ".pdf": "application/pdf",
   ".png": "image/png",
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
@@ -11,7 +17,8 @@ const MIME_BY_EXT = {
 };
 const MAX_JD_LENGTH = 20000;
 const MIN_JD_LENGTH = 30; // server rejects shorter
-const MAX_FILE_SIZE = 3 * 1024 * 1024; // Groq base64 limit ~4MB
+const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // Groq base64 limit ~4MB
+const MAX_PDF_SIZE = 5 * 1024 * 1024; // matches server MAX_PDF_BYTES
 const BREAKDOWN_MAX = {
   must_have_skills: 40,
   nice_to_have_skills: 15,
@@ -62,9 +69,25 @@ function getExtension(name) {
 }
 
 function isAcceptedFile(file) {
-  const hasAcceptedExtension = ACCEPTED_EXTENSIONS.includes(getExtension(file.name));
+  const hasAcceptedExtension = ACCEPTED_EXTENSIONS.includes(
+    getExtension(file.name),
+  );
   const hasAcceptedType = !file.type || ACCEPTED_MIME_TYPES.includes(file.type);
   return hasAcceptedExtension && hasAcceptedType;
+}
+
+function isPdf(file) {
+  return file.type === "application/pdf" || getExtension(file.name) === ".pdf";
+}
+
+function getMaxSize(file) {
+  return isPdf(file) ? MAX_PDF_SIZE : MAX_IMAGE_SIZE;
+}
+
+function sizeMessage(file) {
+  return isPdf(file)
+    ? "PDF must be 5 MB or smaller."
+    : "Image must be 3 MB or smaller.";
 }
 
 function emptyToArray(value) {
@@ -132,13 +155,13 @@ function handleFiles(files) {
 
   if (!isAcceptedFile(file)) {
     clearSelectedFile();
-    setResumeError("Use a PNG, JPG, or WEBP image.");
+    setResumeError("Use a PDF, PNG, JPG, or WEBP file.");
     return;
   }
 
-  if (file.size > MAX_FILE_SIZE) {
+  if (file.size > getMaxSize(file)) {
     clearSelectedFile();
-    setResumeError("Image must be 3 MB or smaller.");
+    setResumeError(sizeMessage(file));
     return;
   }
 
@@ -221,19 +244,21 @@ function validateInput() {
   const description = jobDescription.value.trim();
 
   if (!description || !resumeFile) {
-    return { error: "Add a job description and a valid resume image." };
+    return { error: "Add a job description and a valid resume file." };
   }
 
   if (description.length < MIN_JD_LENGTH) {
-    return { error: `Job description must be at least ${MIN_JD_LENGTH} characters.` };
+    return {
+      error: `Job description must be at least ${MIN_JD_LENGTH} characters.`,
+    };
   }
 
   if (!isAcceptedFile(resumeFile)) {
-    return { error: "Use a PNG, JPG, or WEBP image." };
+    return { error: "Use a PDF, PNG, JPG, or WEBP file." };
   }
 
-  if (resumeFile.size > MAX_FILE_SIZE) {
-    return { error: "Image must be 3 MB or smaller." };
+  if (resumeFile.size > getMaxSize(resumeFile)) {
+    return { error: sizeMessage(resumeFile) };
   }
 
   return { jobDescription: description, file: resumeFile };
@@ -260,14 +285,15 @@ function readImageAsBase64(file) {
         file.type || MIME_BY_EXT[getExtension(file.name)] || match?.[1];
 
       if (!ACCEPTED_MIME_TYPES.includes(media_type)) {
-        reject(new Error("Use a PNG, JPG, or WEBP image."));
+        reject(new Error("Use a PDF, PNG, JPG, or WEBP file."));
         return;
       }
 
       resolve({ base64, media_type });
     };
 
-    reader.onerror = () => reject(new Error("Could not read the resume image."));
+    reader.onerror = () =>
+      reject(new Error("Could not read the resume image."));
     reader.readAsDataURL(file);
   });
 }
@@ -348,7 +374,9 @@ function renderError(message, payload = null) {
 function renderResult(data) {
   hidePanels();
 
-  document.querySelector("#overall-score").textContent = String(data.overall_score);
+  document.querySelector("#overall-score").textContent = String(
+    data.overall_score,
+  );
 
   const verdictEl = document.querySelector("#verdict");
   verdictEl.textContent = data.verdict || "";
@@ -370,8 +398,16 @@ function renderResult(data) {
   }
 
   renderTags(document.querySelector("#matched-skills"), data.matched_skills);
-  renderTags(document.querySelector("#missing-must-have"), data.missing_must_have, true);
-  renderTags(document.querySelector("#missing-nice-to-have"), data.missing_nice_to_have, true);
+  renderTags(
+    document.querySelector("#missing-must-have"),
+    data.missing_must_have,
+    true,
+  );
+  renderTags(
+    document.querySelector("#missing-nice-to-have"),
+    data.missing_nice_to_have,
+    true,
+  );
   renderBulletList(document.querySelector("#strengths"), data.strengths);
   renderBulletList(document.querySelector("#gaps"), data.gaps);
 
@@ -401,7 +437,8 @@ function renderResult(data) {
   }
 
   const quality = data.image_quality || {};
-  document.querySelector("#image-readability").textContent = quality.readability || "Unknown";
+  document.querySelector("#image-readability").textContent =
+    quality.readability || "Unknown";
   renderBulletList(document.querySelector("#image-issues"), quality.issues);
 
   resultsEl.hidden = false;
